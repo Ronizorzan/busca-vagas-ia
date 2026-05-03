@@ -1,0 +1,17 @@
+*.log
+venv/
+.env
+.openclaw/
+.clawhub/
+memory/
+AGENTS.md
+SOUL.md
+IDENTITY.md
+USER.md
+TOOLS.md
+HEARTBEAT.md
+*.tar.gz
+geckodriver*
+gupy_page.html
+temp_*.json
+temp_*.md

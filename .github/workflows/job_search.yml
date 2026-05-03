@@ -1,0 +1,41 @@
+name: Daily Job Search
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Roda todos os dias às 09:00 UTC
+  workflow_dispatch: # Permite rodar manualmente
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv
+
+      - name: Run Job Search
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        run: |
+          # Executa o wrapper ou o script diretamente. 
+          # Aqui rodamos o wrapper adaptado para o CI.
+          bash buscar_vagas_wrapper.sh
+
+      - name: Commit and Push results
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add vagas_remotas.md vagas_remotas.json
+          git commit -m "Update job list: $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git push
