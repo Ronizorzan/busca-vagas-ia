@@ -21,16 +21,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests python-dotenv
+          pip install requests python-dotenv beautifulsoup4 selenium playwright
 
       - name: Run Job Search
         env:
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         run: |
-          # Executa o wrapper ou o script diretamente. 
-          # Aqui rodamos o wrapper adaptado para o CI.
+          # Instalar browsers para Playwright/Selenium
+          playwright install
+          
+          # Executar o wrapper atualizado
           bash buscar_vagas_wrapper.sh
+          
+          # Mover resultados para nomes consistentes
+          mv vagas_combinadas.md vagas_remotas.md || echo "Arquivo Markdown não gerado"
+          mv vagas_combinadas.json vagas_remotas.json || echo "Arquivo JSON não gerado"
 
       - name: Commit and Push results
         run: |
